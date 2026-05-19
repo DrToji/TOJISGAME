@@ -1390,19 +1390,27 @@ let uploadedGames = [];
       playerMeta.textContent = `by ${game.author || 'DRTOJIS'} | Press F for fullscreen | ESC to close`;
       
       playerLoading.style.display = 'flex';
+      playerFrame.removeAttribute('src');
+      playerFrame.removeAttribute('srcdoc');
       
       if (game.content) {
-        playerFrame.removeAttribute('src');
         playerFrame.srcdoc = game.content;
         setTimeout(() => { playerLoading.style.display = 'none'; }, 500);
       } else if (game.url) {
-        const isLocalFile = !/^https?:\/\//i.test(game.url);
-        if (isLocalFile) {
-          playerFrame.removeAttribute('srcdoc');
-          playerFrame.src = game.url;
-          playerLoading.style.display = 'none';
+        const isRemote = /^https?:\/\//i.test(game.url);
+        if (!isRemote) {
+          fetch(game.url)
+            .then(res => res.text())
+            .then(html => {
+              playerFrame.srcdoc = addBaseIfMissing(html, game.url);
+              playerLoading.style.display = 'none';
+            })
+            .catch(err => {
+              console.warn('Local file fetch failed, falling back to iframe src:', err);
+              playerFrame.src = game.url;
+              playerLoading.style.display = 'none';
+            });
         } else {
-          playerFrame.removeAttribute('src');
           playerFrame.srcdoc = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#000;color:#fff;">Loading game...</div>';
           
           fetch(game.url + "?t=" + Date.now())
@@ -1474,7 +1482,19 @@ let uploadedGames = [];
       if (!game.url) return;
       const isLocalFile = !/^https?:\/\//i.test(game.url);
       if (isLocalFile) {
-        window.open(game.url, '_blank', 'noopener');
+        fetch(game.url)
+          .then(res => res.text())
+          .then(html => {
+            const newWin = window.open('about:blank', '_blank');
+            if (!newWin) return;
+            newWin.document.open();
+            newWin.document.write(addBaseIfMissing(html, game.url));
+            newWin.document.close();
+          })
+          .catch(err => {
+            console.error('openOutside local fetch failed', err);
+            window.open(game.url, '_blank', 'noopener');
+          });
         return;
       }
       const newWin = window.open('about:blank', '_blank');
