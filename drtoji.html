@@ -6,15 +6,15 @@
   <title>DRTOJIS games - Ultimate Game Hub</title>
   <style>
     :root {
-      --bg: #0e1320;
-      --surface: #141b2e;
-      --surface-soft: #1f2942;
-      --surface-strong: #0d1220;
-      --text: #f8f9ff;
-      --muted: #9ca3af;
-      --accent: #ff3d71;
-      --accent-soft: rgba(255, 61, 113, 0.16);
-      --border: rgba(255, 255, 255, 0.08);
+      --bg: #000000;
+      --surface: #0d0d0d;
+      --surface-soft: #1a1a1a;
+      --surface-strong: #000000;
+      --text: #ffffff;
+      --muted: #bfbfbf;
+      --accent: #ffffff;
+      --accent-soft: rgba(255,255,255,0.08);
+      --border: rgba(255, 255, 255, 0.06);
       --radius: 18px;
       --shadow: 0 20px 50px rgba(0,0,0,.25);
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -28,8 +28,7 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: radial-gradient(circle at top, rgba(255,61,113,0.12), transparent 22%),
-                  linear-gradient(180deg, #0b1020 0%, #0a101f 45%, #0b1020 100%);
+      background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
       color: var(--text);
     }
     ::-webkit-scrollbar {
@@ -57,6 +56,7 @@
       backdrop-filter: blur(18px);
     }
     .top-bar {
+      position: relative;
       display: grid;
       grid-template-columns: auto 1fr auto;
       gap: 1rem;
@@ -108,6 +108,179 @@
     .top-actions button:hover,
     .top-actions .tag-button:hover {
       transform: translateY(-2px);
+      background: var(--accent-soft);
+    }
+    .theme-panel {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 1.5rem;
+      width: min(320px, calc(100vw - 2rem));
+      background: rgba(10, 12, 18, 0.98);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+      border-radius: 18px;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 100;
+    }
+    .theme-panel.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .theme-panel h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .theme-panel .theme-field {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+    .theme-panel .theme-field label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .theme-panel input[type="color"] {
+      border: none;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+    .card-edit-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      border-radius: 22px;
+    }
+    .card:hover .card-edit-overlay {
+      opacity: 1;
+    }
+    .card-edit-btn {
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #08101f;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      font-weight: 600;
+    }
+    .card-edit-btn:hover {
+      transform: scale(1.15);
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 1rem;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal {
+      background: var(--surface);
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: var(--shadow);
+      animation: slideUp 0.3s ease;
+    }
+    .modal h2 {
+      margin: 0 0 1.5rem;
+      font-size: 1.4rem;
+      color: var(--text);
+    }
+    .modal input[type="text"],
+    .modal input[type="file"] {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    .modal input[type="file"] {
+      cursor: pointer;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+    .modal-buttons button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .modal-buttons button.cancel {
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+    .modal-buttons button.cancel:hover {
+      background: rgba(255,255,255,0.12);
+    }
+    .modal-buttons button.save {
+      background: linear-gradient(135deg, #ff3d71, #ffad64);
+      color: #08101f;
+    }
+    .modal-buttons button.save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(255,61,113,0.3);
+    }
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .theme-panel button {
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px;
+      padding: 0.85rem 1rem;
+    }
+    .theme-panel button:hover {
       background: var(--accent-soft);
     }
     .search-wrap {
@@ -579,6 +752,27 @@
         <button id="uploadButton" type="button">📁 Upload Game</button>
         <button class="tag-button" type="button" data-filter="racing">🏎️ Racing</button>
         <button class="tag-button" type="button" data-filter="shooting">🔫 Shooting</button>
+        <button id="themeButton" type="button">🎨 Theme</button>
+      </div>
+      <div class="theme-panel" id="themePanel" aria-hidden="true">
+        <h3>Customize Colors</h3>
+        <div class="theme-field">
+          <label for="bgColor">Background</label>
+          <input id="bgColor" type="color" value="#000000" />
+        </div>
+        <div class="theme-field">
+          <label for="accentColor">Accent</label>
+          <input id="accentColor" type="color" value="#ffffff" />
+        </div>
+        <div class="theme-field">
+          <label for="surfaceColor">Surface</label>
+          <input id="surfaceColor" type="color" value="#0d0d0d" />
+        </div>
+        <div class="theme-field">
+          <label for="textColor">Text</label>
+          <input id="textColor" type="color" value="#ffffff" />
+        </div>
+        <button id="resetTheme" type="button">Reset colors</button>
       </div>
     </div>
   </header>
@@ -588,6 +782,7 @@
         <h1>🎮 Play 1000+ Free Browser Games</h1>
         <p>DRTOJIS games brings you the biggest collection of HTML5 games. Action, Racing, Shooting, Puzzle, Dress-up, and more. Upload your own games, save favorites, and play in fullscreen!</p>
         <div class="dev-credit">👨‍💻 Main Developer: Ezzatullah</div>
+        <div id="totalGames" style="margin-top:0.5rem;color:var(--muted);font-size:0.95rem;">Total games: —</div>
       </div>
     </section>
 
@@ -636,6 +831,29 @@
     </section>
   </main>
 
+  <!-- Modals -->
+  <div id="renameModal" class="modal-overlay">
+    <div class="modal">
+      <h2>Rename Game</h2>
+      <input id="renameInput" type="text" placeholder="Enter new name...">
+      <div class="modal-buttons">
+        <button class="cancel" onclick="closeRenameModal()">Cancel</button>
+        <button class="save" onclick="saveRename()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pictureModal" class="modal-overlay">
+    <div class="modal">
+      <h2>Change Picture</h2>
+      <input id="pictureInput" type="file" accept="image/*" placeholder="Select an image...">
+      <div class="modal-buttons">
+        <button class="cancel" onclick="closePictureModal()">Cancel</button>
+        <button class="save" onclick="savePicture()">Save</button>
+      </div>
+    </div>
+  </div>
+
   <div id="player" class="player" aria-hidden="true">
     <div class="player-shell" id="playerShell">
       <div class="player-header">
@@ -664,6 +882,12 @@
     const COVER_URL = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main";
     const HTML_URL = "https://cdn.jsdelivr.net/gh/freebuisness/html@main";
     const ZONES_URL = "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json";
+    const ZONES_CANDIDATES = [
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json",
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets@latest/zones.json",
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets@master/zones.json",
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets/zones.json",
+    ];
 
     const embeddedGames = [
   {"id": 0, "name": "Bowmasters", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/0.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/0.html", "author": "Azur Games, Playgendary", "special": []},
@@ -946,18 +1170,25 @@ let uploadedGames = [];
       const card = document.createElement('article');
       card.className = 'card';
       const isFavorited = favorites.has(game.id?.toString() || game.name);
+      const customName = getGameCustomization(game.id || game.name, 'name') || game.name;
+      const customCover = getGameCustomization(game.id || game.name, 'cover') || game.cover;
       
       card.innerHTML = `
         <button type="button" class="card-favorite ${isFavorited ? 'favorited' : ''}" data-game-id="${game.id || game.name}" title="${isFavorited ? 'Remove favorite' : 'Add to favorites'}">
           ${isFavorited ? '❤️' : '🤍'}
         </button>
-        <img src="${game.cover}" alt="${game.name}" loading="lazy" onerror="this.src='https://placehold.co/400x400/1f2942/ffffff?text=${encodeURIComponent(game.name)}'" />
+        <img src="${customCover}" alt="${customName}" loading="lazy" onerror="this.src='https://placehold.co/400x400/1f2942/ffffff?text=${encodeURIComponent(customName)}'" />
+        <div class="card-edit-overlay">
+          <button type="button" class="card-edit-btn" title="Rename game" data-action="rename">✏️</button>
+          <button type="button" class="card-edit-btn" title="Change picture" data-action="picture">🖼️</button>
+        </div>
         <div class="card-body">
-          <h3 class="card-title">${game.name}</h3>
+          <h3 class="card-title">${customName}</h3>
           <p class="card-subtitle">${game.author}</p>
           <div class="card-actions">
             <button type="button" data-action="play">▶ Play</button>
             <button type="button" data-action="newtab">🔗 New Tab</button>
+            <button type="button" data-action="download">⬇ Download</button>
           </div>
         </div>
       `;
@@ -967,6 +1198,23 @@ let uploadedGames = [];
         e.stopPropagation();
         toggleFavorite(game);
       });
+      
+      const renameBtn = card.querySelector('[data-action="rename"]');
+      if (renameBtn) {
+        renameBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openRenameModal(game);
+        });
+      }
+      
+      const pictureBtn = card.querySelector('[data-action="picture"]');
+      if (pictureBtn) {
+        pictureBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openPictureModal(game);
+        });
+      }
+      
       card.querySelector('[data-action="play"]').addEventListener('click', (e) => {
         e.stopPropagation();
         openPlayer(game);
@@ -974,6 +1222,11 @@ let uploadedGames = [];
       card.querySelector('[data-action="newtab"]').addEventListener('click', (e) => {
         e.stopPropagation();
         openOutside(game);
+      });
+      const dlBtn = card.querySelector('[data-action="download"]');
+      if (dlBtn) dlBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        downloadGame(game);
       });
       card.addEventListener('click', () => openPlayer(game));
       
@@ -995,14 +1248,99 @@ let uploadedGames = [];
       const id = game.id?.toString() || game.name;
       if (favorites.has(id)) {
         favorites.delete(id);
-        showToast(`Removed ${game.name} from favorites`);
+        showToast('Removed from favorites');
       } else {
         favorites.add(id);
-        showToast(`Added ${game.name} to favorites ❤️`);
+        showToast('Added to favorites ❤️');
       }
       saveFavorites();
       updateUI();
     }
+
+    // Game Customization
+    let currentEditingGame = null;
+
+    function getGameCustomization(gameId, key) {
+      const customizations = JSON.parse(localStorage.getItem('drtojiCustomizations') || '{}');
+      return customizations[gameId]?.[key];
+    }
+
+    function setGameCustomization(gameId, key, value) {
+      const customizations = JSON.parse(localStorage.getItem('drtojiCustomizations') || '{}');
+      if (!customizations[gameId]) customizations[gameId] = {};
+      customizations[gameId][key] = value;
+      localStorage.setItem('drtojiCustomizations', JSON.stringify(customizations));
+    }
+
+    function openRenameModal(game) {
+      currentEditingGame = game;
+      const renameInput = document.getElementById('renameInput');
+      const customName = getGameCustomization(game.id || game.name, 'name') || game.name;
+      renameInput.value = customName;
+      document.getElementById('renameModal').classList.add('open');
+      renameInput.focus();
+    }
+
+    function closeRenameModal() {
+      document.getElementById('renameModal').classList.remove('open');
+      currentEditingGame = null;
+    }
+
+    function saveRename() {
+      if (!currentEditingGame) return;
+      const newName = document.getElementById('renameInput').value.trim();
+      if (!newName) {
+        showToast('Name cannot be empty');
+        return;
+      }
+      setGameCustomization(currentEditingGame.id || currentEditingGame.name, 'name', newName);
+      showToast(`✏️ Renamed to "${newName}"`);
+      closeRenameModal();
+      updateUI();
+    }
+
+    function openPictureModal(game) {
+      currentEditingGame = game;
+      const pictureInput = document.getElementById('pictureInput');
+      pictureInput.value = '';
+      document.getElementById('pictureModal').classList.add('open');
+      pictureInput.click();
+    }
+
+    function closePictureModal() {
+      document.getElementById('pictureModal').classList.remove('open');
+      currentEditingGame = null;
+    }
+
+    function savePicture() {
+      if (!currentEditingGame) return;
+      const pictureInput = document.getElementById('pictureInput');
+      const file = pictureInput.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        setGameCustomization(currentEditingGame.id || currentEditingGame.name, 'cover', dataUrl);
+        showToast('🖼️ Picture updated');
+        closePictureModal();
+        updateUI();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Modal close on outside click
+    document.addEventListener('click', (e) => {
+      const renameModal = document.getElementById('renameModal');
+      const pictureModal = document.getElementById('pictureModal');
+      if (e.target === renameModal) closeRenameModal();
+      if (e.target === pictureModal) closePictureModal();
+    });
+
+    // Enter key in rename modal
+    document.getElementById('renameInput')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') saveRename();
+    });
 
     function updateUI() {
       const filteredGames = allGames.filter(game => {
@@ -1058,37 +1396,36 @@ let uploadedGames = [];
         playerFrame.srcdoc = game.content;
         setTimeout(() => { playerLoading.style.display = 'none'; }, 500);
       } else if (game.url) {
-        playerFrame.removeAttribute('src');
-        playerFrame.srcdoc = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#000;color:#fff;">Loading game...</div>';
-        
-        fetch(game.url + "?t=" + Date.now())
-          .then(res => res.text())
-          .then(html => {
-            if (game.name === 'BuildNow.gg' || /genizy\/cg-rip@main\/buildnow-gg/.test(html)) {
-              playerFrame.srcdoc = `<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#000;color:#fff;flex-direction:column;gap:1rem;text-align:center;padding:20px;">
-                <h2 style="margin:0 0 1rem;">⚠️ BuildNow.gg is currently unavailable</h2>
-                <p style="max-width:420px;line-height:1.5;color:#ddd;">This title uses an upstream Unity build host that is currently blocked or missing required asset parts. The page itself is fine, but this specific game cannot be embedded right now.</p>
-                <button onclick="window.open('${game.url}', '_blank', 'noopener')" style="background:#ff3d71;border:none;padding:10px 20px;border-radius:20px;color:white;cursor:pointer;">Open in new tab</button>
+        const isLocalFile = !/^https?:\/\//i.test(game.url);
+        if (isLocalFile) {
+          playerFrame.removeAttribute('srcdoc');
+          playerFrame.src = game.url;
+          playerLoading.style.display = 'none';
+        } else {
+          playerFrame.removeAttribute('src');
+          playerFrame.srcdoc = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#000;color:#fff;">Loading game...</div>';
+          
+          fetch(game.url + "?t=" + Date.now())
+            .then(res => res.text())
+            .then(html => {
+              let patchedHtml = html.replace(
+                /https:\/\/cdn\.jsdelivr\.net\/gh\/genizy\/cg-rip@main\/buildnow-gg\//g,
+                'https://raw.githubusercontent.com/genizy/cg-rip/main/buildnow-gg/'
+              );
+              patchedHtml = addBaseIfMissing(patchedHtml, game.url);
+              playerFrame.srcdoc = patchedHtml;
+              playerLoading.style.display = 'none';
+            })
+            .catch(err => {
+              console.error('Failed to load game:', err);
+              playerFrame.srcdoc = `<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#000;color:#f00;flex-direction:column;gap:1rem;text-align:center;padding:20px;">
+                <p>⚠️ Failed to load game.</p>
+                <p style="font-size:0.8rem;color:#888;">The game might be blocked by your network.</p>
+                <button onclick="document.getElementById('selectUpload').click()" style="background:#ff3d71;border:none;padding:10px 20px;border-radius:20px;color:white;cursor:pointer;">📁 Upload My Own Game</button>
               </div>`;
               playerLoading.style.display = 'none';
-              return;
-            }
-            const patchedHtml = html.replace(
-              /https:\/\/cdn\.jsdelivr\.net\/gh\/genizy\/cg-rip@main\/buildnow-gg\//g,
-              'https://raw.githubusercontent.com/genizy/cg-rip/main/buildnow-gg/'
-            );
-            playerFrame.srcdoc = patchedHtml;
-            playerLoading.style.display = 'none';
-          })
-          .catch(err => {
-            console.error('Failed to load game:', err);
-            playerFrame.srcdoc = `<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#000;color:#f00;flex-direction:column;gap:1rem;text-align:center;padding:20px;">
-              <p>⚠️ Failed to load game.</p>
-              <p style="font-size:0.8rem;color:#888;">The game might be blocked by your network.</p>
-              <button onclick="document.getElementById('selectUpload').click()" style="background:#ff3d71;border:none;padding:10px 20px;border-radius:20px;color:white;cursor:pointer;">📁 Upload My Own Game</button>
-            </div>`;
-            playerLoading.style.display = 'none';
-          });
+            });
+        }
       }
       
       player.classList.add('open');
@@ -1132,9 +1469,90 @@ let uploadedGames = [];
         const blob = new Blob([game.content], { type: 'text/html; charset=utf-8' });
         const blobUrl = URL.createObjectURL(blob);
         window.open(blobUrl, '_blank', 'noopener');
-      } else if (game.url) {
-        window.open(game.url, '_blank', 'noopener');
+        return;
       }
+      if (!game.url) return;
+      const isLocalFile = !/^https?:\/\//i.test(game.url);
+      if (isLocalFile) {
+        window.open(game.url, '_blank', 'noopener');
+        return;
+      }
+      const newWin = window.open('about:blank', '_blank');
+      if (!newWin) return;
+      fetch(game.url + '?t=' + Date.now())
+        .then(res => res.text())
+        .then(html => {
+          const cleaned = cleanHtml(html);
+          newWin.document.open();
+          newWin.document.write(cleaned);
+          newWin.document.close();
+        })
+        .catch(err => {
+          // fallback: open raw URL
+          console.error('openOutside fetch failed', err);
+          newWin.location.href = game.url;
+        });
+    }
+
+    function cleanHtml(html) {
+      try {
+        const googleAds = /<script.*?googletagmanager.*?<\/script>/gms;
+        const inlineAds = /<script>\(.*?<\/script>/gms;
+        const sidebars = /<div id="side[\s\S]*?<\/div>/gms;
+        const mobileAds = /<div id="Mobile[\s\S]*?<\/div>/gms;
+        const sidebarStyles = /#sidebarad[0-9].*?}/gms;
+        let out = html.replace(googleAds, '')
+                      .replace(inlineAds, '')
+                      .replace(sidebars, '')
+                      .replace(mobileAds, '')
+                      .replace(sidebarStyles, '');
+        return out;
+      } catch (e) {
+        return html;
+      }
+    }
+
+    function addBaseIfMissing(html, baseUrl) {
+      try {
+        if (!baseUrl) return html;
+        const hasBase = /<base\s+href=["'].*?["']\s*>/i.test(html);
+        if (hasBase) return html;
+        if (/<!doctype html>/i.test(html) || /<html/i.test(html)) {
+          return html.replace(/<head( [^>]*)?>/i, match => match + `\n<base href="${baseUrl}">`);
+        }
+        // fallback: prepend head with base
+        return `<head><base href="${baseUrl}"></head>` + html;
+      } catch (e) { return html; }
+    }
+
+    function downloadGame(game) {
+      if (game.content) {
+        const blob = new Blob([game.content], { type: 'text/html; charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (game.name || 'game') + '.html';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        return;
+      }
+      if (!game.url) return;
+      fetch(game.url + '?t=' + Date.now())
+        .then(res => res.text())
+        .then(html => {
+          const cleaned = cleanHtml(html);
+          const blob = new Blob([cleaned], { type: 'text/html; charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = (game.name || 'game') + '.html';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        }).catch(err => showToast('Download failed'));
     }
 
     function handleFileUpload(file) {
@@ -1149,8 +1567,9 @@ let uploadedGames = [];
       const reader = new FileReader();
       reader.onload = () => {
         const content = reader.result;
+        const gameId = 'upload-' + Date.now();
         const uploaded = {
-          id: 'upload-' + Date.now(),
+          id: gameId,
           name: file.name.replace('.html', ''),
           content: content,
           author: 'Your Upload',
@@ -1162,9 +1581,11 @@ let uploadedGames = [];
         saveUploads();
         renderUploads();
         allGames.unshift(uploaded);
+        favorites.add(gameId);
+        saveFavorites();
         updateUI();
         openPlayer(uploaded);
-        showToast(`✅ ${file.name} uploaded successfully!`);
+        showToast(`✅ ${file.name} uploaded and favorited!`);
       };
       reader.readAsText(file);
     }
@@ -1179,47 +1600,67 @@ let uploadedGames = [];
       return Array.from(gameMap.values());
     }
 
+    // Deduplicate array of games by id, then url, then name
+    function uniqueGames(games) {
+      const map = new Map();
+      for (const g of games) {
+        if (!g) continue;
+        const key = (g.id !== undefined && g.id !== null) ? `id:${g.id}` : (g.url ? `url:${g.url}` : `name:${(g.name||'').toLowerCase()}`);
+        if (!map.has(key)) {
+          map.set(key, g);
+        }
+      }
+      // also collapse games that share same url but different ids
+      const urlMap = new Map();
+      for (const g of map.values()) {
+        if (g.url) {
+          const u = g.url.replace(/\?.*$/,'');
+          if (urlMap.has(u)) continue;
+          urlMap.set(u, g);
+        }
+      }
+      // prefer urlMap values if available
+      if (urlMap.size > 0) return Array.from(urlMap.values());
+      return Array.from(map.values());
+    }
+
     // Replace or neutralize upstream-broken games (e.g. BuildNow.gg)
     function sanitizeGames(games) {
       if (!Array.isArray(games)) return games;
-      const blockedIds = new Set([581]);
-      return games.map(g => {
-        if (!g) return g;
-        const id = g.id;
-        const name = (g.name || '').toString();
-        const url = g.url || '';
-
-        if (blockedIds.has(id) || /genizy\/cg-rip/.test(url) || /BuildNow/i.test(name)) {
-          return {
-            id: 581,
-            name: 'BuildNow.gg (Unavailable)',
-            cover: 'https://placehold.co/400x400/333/ffffff?text=Unavailable',
-            url: null,
-            category: g.category || 'action',
-            tags: g.tags || ['broken'],
-            author: g.author || 'CrazyGames',
-            featured: false
-          };
-        }
-        return g;
-      });
+      return games.map(g => g);
     }
 
     async function loadGames() {
-      gamesCount.textContent = 'Loading 1000+ games...';
+      gamesCount.textContent = 'Loading games...';
       const fallbackGames = mergeUniqueGames(embeddedGames, embeddedCarGames);
       allGames = fallbackGames.map(normalizeGame);
       updateUI();
-      
+      // Try multiple candidate zone sources (improves chance to pull full list)
       try {
-          const response = await fetch(ZONES_URL + "?t=" + Date.now());
-          const data = await response.json();
+        const results = await Promise.allSettled(ZONES_CANDIDATES.map(u => fetch(u + "?t=" + Date.now()).then(r => r.ok ? r.json() : [])));
+        const combined = [];
+        results.forEach(r => {
+          if (r.status === 'fulfilled' && Array.isArray(r.value)) combined.push(...r.value);
+        });
+        const data = combined.length ? combined : (await (await fetch(ZONES_URL + "?t=" + Date.now())).json());
 
-          allGames = data
-            .filter(item => item.id !== -1 && item.id !== undefined)
-            .map(normalizeGame);
-          allGames = sanitizeGames(allGames);
-        
+        // Deduplicate raw data across multiple sources first
+        const dedupedRaw = uniqueGames(data.filter(item => item && item.id !== -1 && item.id !== undefined));
+        allGames = dedupedRaw.map(normalizeGame);
+        allGames = sanitizeGames(allGames);
+
+        // If we have a local BuildNow replacement file, point matching entries to it
+        try {
+          allGames = allGames.map(g => {
+            if (!g) return g;
+            const lowerName = (g.name || '').toLowerCase();
+            const lowerUrl = (g.url || '').toLowerCase();
+            if (lowerName.includes('buildnow') || lowerUrl.includes('buildnow') || lowerUrl.includes('cg-rip') || lowerUrl.includes('genizy')) {
+              return { ...g, url: './buildnow-replacement.html', tags: (g.tags||[]).filter(t=>t!=='broken') };
+            }
+            return g;
+          });
+        } catch (e) { }
         updateUI();
         showToast(`🎮 Loaded ${allGames.length} games!`);
       } catch (error) {
@@ -1227,8 +1668,11 @@ let uploadedGames = [];
         allGames = fallbackGames.map(normalizeGame);
         allGames = sanitizeGames(allGames);
         updateUI();
-        showToast(`🎮 Loaded ${allGames.length} embedded car games (offline mode)`);
+        showToast(`🎮 Loaded ${allGames.length} embedded games (offline mode)`);
       }
+      // Update total games indicator
+      const totalEl = document.getElementById('totalGames');
+      if (totalEl) totalEl.textContent = `Total games: ${allGames.length}`;
     }
 
     // ==================== EVENT LISTENERS ====================
@@ -1272,7 +1716,95 @@ let uploadedGames = [];
         updateUI();
       });
     });
-    
+
+    const themeButton = document.getElementById('themeButton');
+    const themePanel = document.getElementById('themePanel');
+    const accentColor = document.getElementById('accentColor');
+    const bgColor = document.getElementById('bgColor');
+    const surfaceColor = document.getElementById('surfaceColor');
+    const textColor = document.getElementById('textColor');
+    const resetTheme = document.getElementById('resetTheme');
+
+    function hexToRgba(hex, alpha) {
+      const sanitized = hex.replace('#', '');
+      const bigint = parseInt(sanitized, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function applyTheme(colors) {
+      const root = document.documentElement.style;
+      if (colors.accent) {
+        root.setProperty('--accent', colors.accent);
+        root.setProperty('--accent-soft', hexToRgba(colors.accent, 0.12));
+        root.setProperty('--border', hexToRgba(colors.accent, 0.08));
+      }
+      if (colors.bg) {
+        root.setProperty('--bg', colors.bg);
+      }
+      if (colors.surface) {
+        root.setProperty('--surface', colors.surface);
+        root.setProperty('--surface-soft', hexToRgba(colors.surface, 0.16));
+        root.setProperty('--surface-strong', hexToRgba(colors.surface, 0.3));
+      }
+      if (colors.text) {
+        root.setProperty('--text', colors.text);
+      }
+    }
+
+    function saveTheme() {
+      const theme = {
+        accent: accentColor.value,
+        bg: bgColor.value,
+        surface: surfaceColor.value,
+        text: textColor.value,
+      };
+      localStorage.setItem('drtojiTheme', JSON.stringify(theme));
+      applyTheme(theme);
+    }
+
+    function loadTheme() {
+      const saved = localStorage.getItem('drtojiTheme');
+      const defaultTheme = {
+        accent: '#ffffff',
+        bg: '#000000',
+        surface: '#0d0d0d',
+        text: '#ffffff'
+      };
+      const theme = saved ? JSON.parse(saved) : defaultTheme;
+      accentColor.value = theme.accent;
+      bgColor.value = theme.bg;
+      surfaceColor.value = theme.surface;
+      textColor.value = theme.text;
+      applyTheme(theme);
+    }
+
+    themeButton.addEventListener('click', () => {
+      themePanel.classList.toggle('open');
+      themePanel.setAttribute('aria-hidden', themePanel.classList.contains('open') ? 'false' : 'true');
+    });
+    accentColor.addEventListener('input', saveTheme);
+    bgColor.addEventListener('input', saveTheme);
+    surfaceColor.addEventListener('input', saveTheme);
+    textColor.addEventListener('input', saveTheme);
+    resetTheme.addEventListener('click', () => {
+      accentColor.value = '#ffffff';
+      bgColor.value = '#000000';
+      surfaceColor.value = '#0d0d0d';
+      textColor.value = '#ffffff';
+      saveTheme();
+    });
+    document.addEventListener('click', (event) => {
+      if (!themePanel.contains(event.target) && event.target !== themeButton) {
+        themePanel.classList.remove('open');
+        themePanel.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    loadTheme();
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && player.classList.contains('open')) {
