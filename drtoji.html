@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>DRTOJIS games - Ultimate Game Hub</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --surface: #0d0d0d;
+      --surface-soft: #1a1a1a;
+      --surface-strong: #000000;
+      --text: #ffffff;
+      --muted: #bfbfbf;
+      --accent: #ffffff;
+      --accent-soft: rgba(255,255,255,0.08);
+      --border: rgba(255, 255, 255, 0.06);
+      --radius: 18px;
+      --shadow: 0 20px 50px rgba(0,0,0,.25);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+      color: var(--text);
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--surface-strong);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff5c88;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 1rem 1.5rem;
+      background: rgba(7, 13, 27, 0.92);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      backdrop-filter: blur(18px);
+    }
+    .top-bar {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-size: 1.35rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff, #ff9db3);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .logo::before {
+      content: '🎮';
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ff3d71, #ffad64);
+      box-shadow: 0 12px 35px rgba(255,61,113,0.25);
+    }
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+    .top-actions button,
+    .top-actions .tag-button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.9rem 1.3rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      transition: var(--transition);
+      box-shadow: 0 10px 30px rgba(0,0,0,.16);
+      font-weight: 500;
+    }
+    .top-actions button:hover,
+    .top-actions .tag-button:hover {
+      transform: translateY(-2px);
+      background: var(--accent-soft);
+    }
+    .theme-panel {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 1.5rem;
+      width: min(320px, calc(100vw - 2rem));
+      background: rgba(10, 12, 18, 0.98);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+      border-radius: 18px;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 100;
+    }
+    .theme-panel.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .theme-panel h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .theme-panel .theme-field {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+    .theme-panel .theme-field label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .theme-panel input[type="color"] {
+      border: none;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+    .card-edit-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      border-radius: 22px;
+    }
+    .card:hover .card-edit-overlay {
+      opacity: 1;
+    }
+    .card-edit-btn {
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #08101f;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      font-weight: 600;
+    }
+    .card-edit-btn:hover {
+      transform: scale(1.15);
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 1rem;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal {
+      background: var(--surface);
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: var(--shadow);
+      animation: slideUp 0.3s ease;
+    }
+    .modal h2 {
+      margin: 0 0 1.5rem;
+      font-size: 1.4rem;
+      color: var(--text);
+    }
+    .modal input[type="text"],
+    .modal input[type="file"] {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    .modal input[type="file"] {
+      cursor: pointer;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+    .modal-buttons button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .modal-buttons button.cancel {
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+    .modal-buttons button.cancel:hover {
+      background: rgba(255,255,255,0.12);
+    }
+    .modal-buttons button.save {
+      background: linear-gradient(135deg, #ff3d71, #ffad64);
+      color: #08101f;
+    }
+    .modal-buttons button.save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(255,61,113,0.3);
+    }
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .theme-panel button {
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px;
+      padding: 0.85rem 1rem;
+    }
+    .theme-panel button:hover {
+      background: var(--accent-soft);
+    }
+    .search-wrap {
+      display: flex;
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .search-wrap input {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 1rem 1.25rem;
+      font-size: 1rem;
+      outline: none;
+      transition: var(--transition);
+    }
+    .search-wrap input:focus {
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.1);
+    }
+    .search-wrap input::placeholder {
+      color: var(--muted);
+    }
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    .hero {
+      padding: 1.5rem 0 2rem;
+      animation: fadeInUp 0.6s ease;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 4.4rem);
+      line-height: 1.02;
+      background: linear-gradient(135deg, #fff, #ff9db3);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p {
+      max-width: 760px;
+      margin: 0.5rem 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    .dev-credit {
+      color: var(--accent);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      opacity: 0.8;
+    }
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      margin: 2.5rem 0 1.5rem;
+      flex-wrap: wrap;
+    }
+    .section-heading h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .section-heading span {
+      color: var(--muted);
+      font-size: 0.95rem;
+      background: rgba(255,255,255,0.05);
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+    }
+    .category-tabs {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      padding: 0.5rem 0;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+    .category-tab {
+      border: none;
+      border-radius: 999px;
+      padding: 0.7rem 1.5rem;
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .category-tab:hover {
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+    .category-tab.active {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 5px 20px rgba(255,61,113,0.3);
+    }
+    .row-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(15,26,52,.95));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      animation: fadeInUp 0.5s ease;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--accent);
+      box-shadow: 0 25px 40px rgba(0,0,0,0.3);
+    }
+    .card img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      background: #111a2f;
+      transition: transform 0.5s ease;
+    }
+    .card:hover img {
+      transform: scale(1.05);
+    }
+    .card-body {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-title {
+      margin: 0 0 0.25rem;
+      font-size: 0.95rem;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+    .card-subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.7rem;
+      line-height: 1.4;
+    }
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    .card-actions button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.5rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      flex: 1;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+    .card-actions button:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+    .card-favorite {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      border: none;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.6);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      backdrop-filter: blur(4px);
+      z-index: 2;
+    }
+    .card-favorite:hover {
+      background: var(--accent);
+      transform: scale(1.1);
+    }
+    .card-favorite.favorited {
+      background: linear-gradient(135deg, #ff3d71, #ffad64);
+      color: #08101f;
+    }
+    .player {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(8,13,24,0.98);
+      z-index: 1000;
+      padding: 1rem;
+      backdrop-filter: blur(12px);
+      animation: fadeIn 0.3s ease;
+    }
+    .player.open {
+      display: flex;
+    }
+    .player-shell {
+      width: min(1300px, 100%);
+      height: min(90vh, 850px);
+      background: #0a1220;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.1);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      transition: all 0.3s ease;
+    }
+    .player-shell.fullscreen {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+    }
+    .player-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(180deg, rgba(20,27,46,0.95), rgba(10,18,32,0.95));
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-wrap: wrap;
+    }
+    .player-info {
+      flex: 1;
+    }
+    .player-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .player-header .player-meta {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 0.2rem;
+    }
+    .player-controls {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .player-controls button {
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .player-controls button:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+    .player-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #000;
+    }
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10,18,32,0.9);
+      z-index: 10;
+    }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,61,113,0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .upload-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 22px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      transition: var(--transition);
+    }
+    .upload-section:hover {
+      border-color: var(--accent-soft);
+    }
+    .upload-section p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .upload-section button {
+      border: none;
+      border-radius: 999px;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, #ff3d71, #ffad64);
+      color: #08101f;
+      cursor: pointer;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    .upload-section button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(255,61,113,0.3);
+    }
+    .upload-list {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .upload-card {
+      border-radius: 20px;
+      background: #111a2f;
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      transition: var(--transition);
+    }
+    .upload-card:hover {
+      border-color: var(--accent);
+    }
+    .upload-card span {
+      color: var(--text);
+      font-weight: 600;
+      word-break: break-word;
+    }
+    .upload-card button {
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      cursor: pointer;
+      color: var(--text);
+      transition: var(--transition);
+    }
+    .upload-card button:hover {
+      background: var(--accent);
+    }
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--surface);
+      border-left: 4px solid var(--accent);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      color: var(--text);
+      z-index: 2000;
+      animation: slideInRight 0.3s ease;
+      box-shadow: var(--shadow);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    @media (max-width: 768px) {
+      .top-bar {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .top-actions {
+        justify-content: stretch;
+      }
+      .top-actions button, .top-actions .tag-button {
+        flex: 1;
+        text-align: center;
+      }
+      .upload-section {
+        grid-template-columns: 1fr;
+      }
+      .row-grid {
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+      .player-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .player-controls {
+        justify-content: center;
+      }
+      .category-tabs {
+        gap: 0.5rem;
+      }
+      .category-tab {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+      border-radius: 22px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top-bar">
+      <div class="logo">DRTOJIS games</div>
+      <div class="search-wrap">
+        <input id="searchInput" type="search" placeholder="Search 1000+ games... (action, racing, shooting, puzzle, etc.)" aria-label="Search games" />
+      </div>
+      <div class="top-actions">
+        <button id="uploadButton" type="button">📁 Upload Game</button>
+        <button class="tag-button" type="button" data-filter="racing">🏎️ Racing</button>
+        <button class="tag-button" type="button" data-filter="shooting">🔫 Shooting</button>
+        <button id="themeButton" type="button">🎨 Theme</button>
+      </div>
+      <div class="theme-panel" id="themePanel" aria-hidden="true">
+        <h3>Customize Colors</h3>
+        <div class="theme-field">
+          <label for="bgColor">Background</label>
+          <input id="bgColor" type="color" value="#000000" />
+        </div>
+        <div class="theme-field">
+          <label for="accentColor">Accent</label>
+          <input id="accentColor" type="color" value="#ffffff" />
+        </div>
+        <div class="theme-field">
+          <label for="surfaceColor">Surface</label>
+          <input id="surfaceColor" type="color" value="#0d0d0d" />
+        </div>
+        <div class="theme-field">
+          <label for="textColor">Text</label>
+          <input id="textColor" type="color" value="#ffffff" />
+        </div>
+        <button id="resetTheme" type="button">Reset colors</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <div>
+        <h1>🎮 Play 1000+ Free Browser Games</h1>
+        <p>DRTOJIS games brings you the biggest collection of HTML5 games. Action, Racing, Shooting, Puzzle, Dress-up, and more. Upload your own games, save favorites, and play in fullscreen!</p>
+        <div class="dev-credit">👨‍💻 Main Developer: Ezzatullah</div>
+        <div id="totalGames" style="margin-top:0.5rem;color:var(--muted);font-size:0.95rem;">Total games: —</div>
+      </div>
+    </section>
+
+    <div class="category-tabs" id="categoryTabs">
+      <button class="category-tab active" data-category="all">🎯 All Games</button>
+      <button class="category-tab" data-category="action">⚡ Action</button>
+      <button class="category-tab" data-category="racing">🏎️ Racing</button>
+      <button class="category-tab" data-category="shooting">🔫 Shooting</button>
+      <button class="category-tab" data-category="puzzle">🧩 Puzzle</button>
+      <button class="category-tab" data-category="sports">⚽ Sports</button>
+      <button class="category-tab" data-category="makeup">💄 Dress-up</button>
+      <button class="category-tab" data-category="adventure">🗺️ Adventure</button>
+    </div>
+
+    <section id="favoritesSection" style="display:none">
+      <div class="section-heading">
+        <h2>❤️ Your Favorites</h2>
+        <span id="favoritesCount">0 games</span>
+      </div>
+      <div id="favoritesRow" class="row-grid"></div>
+    </section>
+
+    <section id="gamesSection">
+      <div class="section-heading">
+        <h2 id="currentCategoryTitle">All Games</h2>
+        <span id="gamesCount">Loading...</span>
+      </div>
+      <div id="gamesRow" class="row-grid"></div>
+    </section>
+
+    <section class="upload-section">
+      <div>
+        <p>✨ <strong>Upload your own HTML games</strong> — They'll be saved in your browser and appear here instantly. Play them anytime, even offline!</p>
+        <p style="font-size: 0.85rem; margin-top: 0.5rem;">Supported: .html files up to 10MB</p>
+      </div>
+      <button id="selectUpload" type="button">📂 Choose HTML File</button>
+      <input id="fileInput" type="file" accept=".html,text/html" style="display:none" />
+    </section>
+
+    <section id="uploadSection" style="display:none">
+      <div class="section-heading">
+        <h2>📦 Your Uploaded Games</h2>
+        <span id="uploadCount">0 games</span>
+      </div>
+      <div id="uploadList" class="upload-list"></div>
+    </section>
+  </main>
+
+  <!-- Modals -->
+  <div id="renameModal" class="modal-overlay">
+    <div class="modal">
+      <h2>Rename Game</h2>
+      <input id="renameInput" type="text" placeholder="Enter new name...">
+      <div class="modal-buttons">
+        <button class="cancel" onclick="closeRenameModal()">Cancel</button>
+        <button class="save" onclick="saveRename()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pictureModal" class="modal-overlay">
+    <div class="modal">
+      <h2>Change Picture</h2>
+      <input id="pictureInput" type="file" accept="image/*" placeholder="Select an image...">
+      <div class="modal-buttons">
+        <button class="cancel" onclick="closePictureModal()">Cancel</button>
+        <button class="save" onclick="savePicture()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="player" class="player" aria-hidden="true">
+    <div class="player-shell" id="playerShell">
+      <div class="player-header">
+        <div class="player-info">
+          <h3 id="playerTitle">Playing game</h3>
+          <div class="player-meta" id="playerMeta"></div>
+        </div>
+        <div class="player-controls">
+          <button id="fullscreenBtn" title="Fullscreen (F)">⛶ Fullscreen</button>
+          <button id="openNewTab">🔗 New Tab</button>
+          <button id="closePlayer">✖ Close (ESC)</button>
+        </div>
+      </div>
+      <div style="position: relative; height: 100%;">
+        <iframe id="playerFrame" class="player-frame" allow="fullscreen; gamepad *; autoplay *"></iframe>
+        <div id="playerLoading" class="loading-overlay" style="display: none;">
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== CONFIGURATION ====================
+    // Main Developer: Ezzatullah
+    const COVER_URL = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main";
+    const HTML_URL = "https://cdn.jsdelivr.net/gh/freebuisness/html@main";
+    const ZONES_URL = "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json";
+    const ZONES_CANDIDATES = [
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json",
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets@latest/zones.json",
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets@master/zones.json",
+      "https://cdn.jsdelivr.net/gh/freebuisness/assets/zones.json",
+    ];
+
+    const embeddedGames = [
+  {"id": 0, "name": "Bowmasters", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/0.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/0.html", "author": "Azur Games, Playgendary", "special": []},
+  {"id": 1, "name": "OvO", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/1.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/1-fde.html", "author": "Dedra Games", "special": []},
+  {"id": 2, "name": "OvO 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/2.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/2e.html", "author": "Dedra Games", "special": []},
+  {"id": 3, "name": "OvO 3 Dimensions", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/3.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/3.html", "author": "Dedra Games", "special": []},
+  {"id": 4, "name": "Gladihoppers", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/4.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/4.html", "author": "Dreamon Studios", "special": []},
+  {"id": 5, "name": "Ice Dodo", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/5.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/5.html", "author": "Onionfist Studio", "special": []},
+  {"id": 6, "name": "Block Blast", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/6.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/6.html", "author": "reunbozdo", "special": []},
+  {"id": 7, "name": "Jetpack Joyride", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/7.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/7.html", "author": "Halfbrick Studios", "special": []},
+  {"id": 8, "name": "Friday Night Funkin", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/8.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/8-wow.html", "author": "ninja-muffin24", "special": []},
+  {"id": 9, "name": "Sprunki", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/9.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/9.html", "author": "NyankoBfLol", "special": []},
+  {"id": 10, "name": "Temple Run 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/10.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/10.html", "author": "Imangi STUDIOS", "special": []},
+  {"id": 11, "name": "Stickman Hook", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/11.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/11.html", "author": "Madbox", "special": []},
+  {"id": 13, "name": "Attack Hole", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/13.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/13.html", "author": "Homa Games", "special": []},
+  {"id": 14, "name": "Bridge Race", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/14.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/14.html", "author": "QubicGames", "special": []},
+  {"id": 15, "name": "Color Water Sort 3D", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/15.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/15.html", "author": "Tapnation", "special": []},
+  {"id": 16, "name": "Hide N Seek", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/16.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/16.html", "author": "Supersonic Studios LTD", "special": []},
+  {"id": 17, "name": "Magic Tiles 3", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/17.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/17.html", "author": "AmaNotes", "special": []},
+  {"id": 18, "name": "Stacky Dash", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/18.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/18.html", "author": "Supersonic Studios LTD", "special": []},
+  {"id": 19, "name": "Supreme Duelist", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/19.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/19.html", "author": "Neron's Brother", "special": []},
+  {"id": 20, "name": "Tall Man Run", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/20.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/20a.html", "author": "Supersonic Studios LTD", "special": []},
+  {"id": 21, "name": "Turbo Stars", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/21.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/21.html", "author": "https://play.google.com/store/apps/details?id=com.turbo.stars", "special": []},
+  {"id": 22, "name": "Mob Control HTML5", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/22.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/22.html", "author": "Voodoo", "special": []},
+  {"id": 23, "name": "Pou", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/23.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/23.html", "author": "Zakeh", "special": []},
+  {"id": 24, "name": "Crossy Road", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/24.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/24.html", "author": "Hipster Whale", "special": []},
+  {"id": 25, "name": "Basket Battle", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/25.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/25.html", "author": "Supersonic Studios LTD", "special": []},
+  {"id": 26, "name": "Amaze", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/26.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/26.html", "author": "CrazyLabs", "special": []},
+  {"id": 27, "name": "Geometry Dash Lite (REMAKE)", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/27.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/27-f.html", "author": "RobTop Games", "special": []},
+  {"id": 28, "name": "Basketball Frvr", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/28.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/28.html", "author": "FRVR", "special": []},
+  {"id": 29, "name": "Bazooka Boy", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/29.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/29.html", "author": "Supersonic Studios LTD", "special": []},
+  {"id": 30, "name": "Bottle Jump 3D", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/30.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/30.html", "author": "CASUAL AZUR GAMES", "special": []},
+  {"id": 31, "name": "Color Match", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/31.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/31.html", "author": "Supersonic Studios LTD", "special": []},
+  {"id": 32, "name": "Dig Deep", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/32.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/32.html", "author": "CrazyLabs LTD", "special": []},
+  {"id": 33, "name": "Retro Bowl", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/33.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/33.html", "author": "New Star Games", "special": []},
+  {"id": 34, "name": "Retro Bowl College", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/34.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/34-fixed.html", "author": "New Star Games", "special": []},
+  {"id": 36, "name": "Monster Tracks", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/36.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/36.html", "author": "Fancade", "special": []},
+  {"id": 37, "name": "Gobble", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/37.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/37.html", "author": "Fancade", "special": []},
+  {"id": 38, "name": "Five Nights at Freddy's", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/38.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/38.html", "author": "Scott Cawthon", "special": []},
+  {"id": 39, "name": "Five Nights at Freddy's 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/39.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/39.html", "author": "Scott Cawthon", "special": []},
+  {"id": 40, "name": "Five Nights at Freddy's 3", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/40.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/40.html", "author": "Scott Cawthon", "special": []},
+  {"id": 41, "name": "Five Nights at Freddy's 4", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/41.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/41.html", "author": "Scott Cawthon", "special": []},
+  {"id": 42, "name": "Road of Fury", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/42.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/42.html", "author": "IriySoft", "special": []},
+  {"id": 43, "name": "Driven Wild", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/43.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/43.html", "author": "KilledByAPixel", "special": []},
+  {"id": 44, "name": "Ragdoll Hit", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/44.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/44-fix.html", "author": "Kids Games LLC", "special": []},
+  {"id": 45, "name": "Vex 1", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/45.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/45.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 46, "name": "Vex 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/46.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/46.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 47, "name": "Vex 3", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/47.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/47.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 48, "name": "Vex 3 XMAS", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/48.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/48.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 49, "name": "Vex 4", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/49.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/49.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 50, "name": "Vex 5", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/50.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/50.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 51, "name": "Vex 6", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/51.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/51.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 52, "name": "Vex 7", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/52.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/52.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 53, "name": "Vex 8", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/53.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/53.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 54, "name": "Vex Challenges", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/54.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/54.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 55, "name": "Vex X3M", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/55.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/55.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 56, "name": "Vex X3M 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/56.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/56.html", "author": "Lorenzo De Carlo", "special": []},
+  {"id": 58, "name": "1v1.LoL", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/58.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/58.html", "author": "JustPlay.LOL", "special": []},
+  {"id": 59, "name": "A Dance of Fire and Ice", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/59.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/59.html", "author": "fizzd", "special": []},
+  {"id": 60, "name": "Achievement Unlocked", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/60.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/60.html", "author": "jmtb02", "special": []},
+  {"id": 61, "name": "Achievement Unlocked 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/61.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/61.html", "author": "jmtb02", "special": []},
+  {"id": 62, "name": "Achievement Unlocked 3", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/62.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/62.html", "author": "jmtb02", "special": []},
+  {"id": 63, "name": "Angry Birds", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/63.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/63.html", "author": "Rovio Entertainment", "special": []},
+  {"id": 64, "name": "Backrooms", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/64.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/64-fix.html", "author": "Esyverse", "special": []},
+  {"id": 65, "name": "Baldi's Basics", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/65.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/65-fixed.html", "author": "Basically Games", "special": []},
+  {"id": 66, "name": "Basket Random", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/66.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/66.html", "author": "RHM Interactive OÜ", "special": []},
+  {"id": 67, "name": "Big Tower Tiny Square", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/67.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/67-f.html", "author": "EvilObjective", "special": []},
+  {"id": 68, "name": "Big NEON Tower Tiny Square", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/68.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/68.html", "author": "EvilObjective", "special": []},
+  {"id": 69, "name": "Big ICE Tower Tiny Square", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/69.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/69.html", "author": "EvilObjective", "special": []},
+  {"id": 70, "name": "BitLife", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/70.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/70.html", "author": "Candywriter", "special": []},
+  {"id": 71, "name": "Bloons TD", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/71.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/71.html", "author": "Ninja Kiwi", "special": []},
+  {"id": 72, "name": "Bloons TD 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/72.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/72.html", "author": "Ninja Kiwi", "special": []},
+  {"id": 73, "name": "Bloons TD 3", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/73.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/73.html", "author": "Ninja Kiwi", "special": []},
+  {"id": 74, "name": "Bloons TD 4", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/74.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/74.html", "author": "Ninja Kiwi", "special": []},
+  {"id": 75, "name": "Bloons TD 5", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/75.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/75-fix.html", "author": "Ninja Kiwi", "special": []},
+  {"id": 76, "name": "Bob The Robber 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/76.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/76-fix.html", "author": "Meow Beast", "special": []},
+  {"id": 77, "name": "Boxing Random", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/77.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/77.html", "author": "RHM Interactive", "special": []},
+  {"id": 78, "name": "Burrito Bison: Launcha Libre", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/78.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/78.html", "author": "Juicy Beast", "special": []},
+  {"id": 79, "name": "Cannon Basketball", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/79.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/79.html", "author": "Oleh \"qzix13\" Kuzyk", "special": []},
+  {"id": 80, "name": "Cannon Basketball 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/80.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/80.html", "author": "Oleh \"qzix13\" Kuzyk", "special": []},
+  {"id": 81, "name": "Cluster Rush", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/81.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/81.html", "author": "Landfall", "special": []},
+  {"id": 82, "name": "Cookie Clicker", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/82.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/82-a.html", "author": "Orteil", "special": []},
+  {"id": 83, "name": "Coreball", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/83.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/83.html", "author": "Ben Vinegar", "special": []},
+  {"id": 84, "name": "Cubefield", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/84.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/84.html", "author": "Max Abernethy", "special": []},
+  {"id": 85, "name": "Cut the Rope", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/85.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/85-f.html", "author": "ZeptoLab", "special": []},
+  {"id": 86, "name": "Draw Climber", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/86.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/86.html", "author": "VOODOO", "special": []},
+  {"id": 87, "name": "Emulator.JS", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/87.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/87.html", "author": "Ethan O'Brien", "special": []},
+  {"id": 88, "name": "Fireboy and Watergirl 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/88.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/88.html", "author": "Oslo Albet", "special": []},
+  {"id": 89, "name": "Fireboy and Watergirl 3", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/89.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/89.html", "author": "Oslo Albet", "special": []},
+  {"id": 90, "name": "Granny", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/90.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/90-fix2.html", "author": "DVloper", "special": []},
+  {"id": 91, "name": "Gunspin", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/91.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/91.html", "author": "minijuegos.com", "special": []},
+  {"id": 92, "name": "Highway Racer 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/92.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/92.html", "author": "Bone Cracker Games", "special": []},
+  {"id": 93, "name": "Johnny Trigger", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/93.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/93.html", "author": "SayGames", "special": []},
+  {"id": 94, "name": "Journey Downhill", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/94.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/94.html", "author": "Megagon Industries", "special": []},
+  {"id": 95, "name": "Line Rider", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/95.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/95.html", "author": "Boštjan Čadež", "special": []},
+  {"id": 96, "name": "Moto X3M", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/96.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/96.html", "author": "MadPuffers", "special": []},
+  {"id": 97, "name": "Moto X3M 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/97.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/97.html", "author": "MadPuffers", "special": []},
+  {"id": 98, "name": "Moto X3M 3", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/98.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/98.html", "author": "MadPuffers", "special": []},
+  {"id": 99, "name": "Moto X3M Spooky", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/99.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/99.html", "author": "MadPuffers", "special": []},
+  {"id": 100, "name": "Moto X3M Winter", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/100.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/100-f.html", "author": "MadPuffers", "special": []},
+  {"id": 101, "name": "Ninja vs EvilCorp", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/101.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/101.html", "author": "Rémi Vansteelandt", "special": []},
+  {"id": 102, "name": "Paper.io 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/102.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/102.html", "author": "VOODOO", "special": []},
+];
+
+const embeddedCarGames = [
+  {"id": 36, "name": "Monster Tracks", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/36.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/36.html", "author": "Fancade", "special": []},
+  {"id": 42, "name": "Road of Fury", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/42.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/42.html", "author": "IriySoft", "special": []},
+  {"id": 92, "name": "Highway Racer 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/92.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/92.html", "author": "Bone Cracker Games", "special": []},
+  {"id": 96, "name": "Moto X3M", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/96.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/96.html", "author": "MadPuffers", "special": []},
+  {"id": 97, "name": "Moto X3M 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/97.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/97.html", "author": "MadPuffers", "special": []},
+  {"id": 98, "name": "Moto X3M 3", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/98.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/98.html", "author": "MadPuffers", "special": []},
+  {"id": 99, "name": "Moto X3M Spooky", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/99.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/99.html", "author": "MadPuffers", "special": []},
+  {"id": 100, "name": "Moto X3M Winter", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/100.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/100-f.html", "author": "MadPuffers", "special": []},
+  {"id": 122, "name": "Survival Race", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/122.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/122.html", "author": "Brain Massage", "special": []},
+  {"id": 124, "name": "Moto X3M Pool Party", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/124.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/124.html", "author": "MadPuffers", "special": []},
+  {"id": 157, "name": "Hill Climb Racing Lite", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/157.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/157.html", "author": "Fingersoft", "special": []},
+  {"id": 160, "name": "Race Master 3D", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/160.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/160.html", "author": "Beresnev Games", "special": []},
+  {"id": 173, "name": "Drift Hunters", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/173.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/173.html", "author": "Illia Kaminetskyi", "special": []},
+  {"id": 264, "name": "Escape Road", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/264.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/264.html", "author": "AzGames", "special": []},
+  {"id": 265, "name": "Escape Road 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/265.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/265-fix.html", "author": "AzGames", "special": []},
+  {"id": 266, "name": "Speed Stars", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/266.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/266-a.html", "author": "Luke Doukakis", "special": ["port"]},
+  {"id": 276, "name": "Drift Boss", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/276.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/276.html", "author": "marketjs", "special": []},
+  {"id": 278, "name": "Madalin Stunt Cars 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/278.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/278.html", "author": "Madalin Games", "special": []},
+  {"id": 279, "name": "Madalin Stunt Cars 3", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/279.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/279.html", "author": "Madalin Games", "special": []},
+  {"id": 331, "name": "Crazy Cars", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/331.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/331.html", "author": "No Pressure Studios", "special": []},
+  {"id": 379, "name": "Car Survival 3D", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/379.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/379.html", "author": "Yandex", "special": []},
+  {"id": 382, "name": "Cool Cars Run 3D", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/382.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/382.html", "author": "Yandex", "special": []},
+  {"id": 383, "name": "Crush Cars 3D", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/383.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/383.html", "author": "Yandex", "special": []},
+  {"id": 385, "name": "Destroy The Car 3D", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/385.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/385.html", "author": "Yandex", "special": []},
+  {"id": 399, "name": "Mega Car Jumps", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/399.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/399.html", "author": "Yandex", "special": []},
+  {"id": 409, "name": "Telekinesis Car", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/409.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/409.html", "author": "Yandex", "special": []},
+  {"id": 410, "name": "Telekinesis Drive", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/410.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/410.html", "author": "Yandex", "special": []},
+  {"id": 413, "name": "Tug of War with Cars", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/413.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/413.html", "author": "Yandex", "special": []},
+  {"id": 543, "name": "Jelly Drift", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/543.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/543-a.html", "author": "DaniDev", "special": ["port"]},
+  {"id": 567, "name": "Highway Racer", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/567.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/567.html", "author": "CrazyGames", "special": []},
+  {"id": 568, "name": "Highway Racer 2 REMASTERED", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/568.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/568.html", "author": "CrazyGames", "special": []},
+  {"id": 579, "name": "Super Star Car", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/579.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/579.html", "author": "CrazyGames", "special": []},
+  {"id": 580, "name": "Traffic Rider", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/580.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/580.html", "author": "CrazyGames", "special": []},
+  {"id": 707, "name": "Traffic Racer", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/707.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/707-fix.html", "author": "skgames, madkidgames", "special": []},
+  {"id": 744, "name": "Escape Road City 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/744.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/744-a.html", "author": "AZ Games", "special": []},
+  {"id": 792, "name": "Escape Road 3", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/792.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/792.html", "author": "AzGames", "special": []},
+  {"id": 810, "name": "Need For Speed: Carbon", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/810.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/810-fix.html", "author": "EA Sports", "special": ["emulator", "nds"]},
+  {"id": 811, "name": "Need For Speed: Most Wanted", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/811.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/811.html", "author": "EA Sports", "special": ["emulator", "gba"]},
+  {"id": 812, "name": "Need For Speed: Underground 2", "cover": "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/812.png", "url": "https://cdn.jsdelivr.net/gh/freebuisness/html@main/812.html", "author": "EA Sports", "special": ["emulator", "gba"]},
+];
+
+let uploadedGames = [];
+    let favorites = new Set();
+    let currentCategory = 'all';
+    let currentSearchQuery = '';
+
+    // DOM Elements
+    const searchInput = document.getElementById('searchInput');
+    const favoritesSection = document.getElementById('favoritesSection');
+    const favoritesRow = document.getElementById('favoritesRow');
+    const favoritesCount = document.getElementById('favoritesCount');
+    const gamesRow = document.getElementById('gamesRow');
+    const gamesCount = document.getElementById('gamesCount');
+    const currentCategoryTitle = document.getElementById('currentCategoryTitle');
+    const uploadSection = document.getElementById('uploadSection');
+    const uploadList = document.getElementById('uploadList');
+    const uploadCount = document.getElementById('uploadCount');
+    const selectUpload = document.getElementById('selectUpload');
+    const uploadButton = document.getElementById('uploadButton');
+    const fileInput = document.getElementById('fileInput');
+    const player = document.getElementById('player');
+    const playerShell = document.getElementById('playerShell');
+    const playerFrame = document.getElementById('playerFrame');
+    const playerTitle = document.getElementById('playerTitle');
+    const playerMeta = document.getElementById('playerMeta');
+    const closePlayer = document.getElementById('closePlayer');
+    const openNewTab = document.getElementById('openNewTab');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const playerLoading = document.getElementById('playerLoading');
+
+    // ==================== UTILITIES ====================
+    function showToast(message, duration = 3000) {
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) existingToast.remove();
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), duration);
+    }
+
+    function saveFavorites() {
+      localStorage.setItem('drtojisFavorites', JSON.stringify([...favorites]));
+    }
+
+    function loadFavorites() {
+      try {
+        favorites = new Set(JSON.parse(localStorage.getItem('drtojisFavorites') || '[]'));
+      } catch {
+        favorites = new Set();
+      }
+    }
+
+    function saveUploads() {
+      localStorage.setItem('drtojiUploadedGames', JSON.stringify(uploadedGames));
+    }
+
+    function loadUploads() {
+      try {
+        uploadedGames = JSON.parse(localStorage.getItem('drtojiUploadedGames') || '[]');
+      } catch (error) {
+        uploadedGames = [];
+      }
+      renderUploads();
+    }
+
+    function renderUploads() {
+      if (uploadedGames.length === 0) {
+        uploadSection.style.display = 'none';
+        return;
+      }
+      uploadSection.style.display = 'block';
+      uploadCount.textContent = `${uploadedGames.length} game${uploadedGames.length !== 1 ? 's' : ''}`;
+      uploadList.innerHTML = '';
+      uploadedGames.forEach((game, index) => {
+        const card = document.createElement('div');
+        card.className = 'upload-card';
+        card.innerHTML = `
+          <span>📄 ${game.name}</span>
+          <div>
+            <button type="button" data-index="${index}" data-action="play-upload">▶ Play</button>
+            <button type="button" data-index="${index}" data-action="remove-upload">🗑 Remove</button>
+          </div>
+        `;
+        uploadList.appendChild(card);
+      });
+      uploadList.querySelectorAll('[data-action="play-upload"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const game = uploadedGames[Number(btn.dataset.index)];
+          openPlayer(game);
+        });
+      });
+      uploadList.querySelectorAll('[data-action="remove-upload"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (confirm('Remove this game from your collection?')) {
+            uploadedGames.splice(Number(btn.dataset.index), 1);
+            saveUploads();
+            renderUploads();
+            showToast('Game removed');
+          }
+        });
+      });
+    }
+
+    function getCategoryFromTags(tags) {
+      if (!tags) return 'other';
+      const tagStr = tags.join(' ').toLowerCase();
+      if (/makeup|dress|fashion|beauty|style/.test(tagStr)) return 'makeup';
+      if (/car|race|drift|moto|racing|driving/.test(tagStr)) return 'racing';
+      if (/shoot|gun|bullet|sniper|fps/.test(tagStr)) return 'shooting';
+      if (/puzzle|match|2048|ropes/.test(tagStr)) return 'puzzle';
+      if (/sports|soccer|basketball|football/.test(tagStr)) return 'sports';
+      if (/adventure|temple|run|parkour/.test(tagStr)) return 'adventure';
+      return 'action';
+    }
+
+    function normalizeGame(game) {
+      let category = game.category || getCategoryFromTags(game.special);
+      let coverUrl = game.cover ? game.cover.replace('{COVER_URL}', COVER_URL) : null;
+      let gameUrl = game.url ? game.url.replace('{HTML_URL}', HTML_URL) : `$HTML_URL + '/${game.id}.html`;
+      
+      return {
+        id: game.id,
+        name: game.name,
+        cover: coverUrl,
+        url: gameUrl,
+        category: category,
+        tags: game.special || [],
+        author: game.author || 'Unknown',
+        featured: game.featured || false
+      };
+    }
+
+    function renderCard(game) {
+      const card = document.createElement('article');
+      card.className = 'card';
+      const isFavorited = favorites.has(game.id?.toString() || game.name);
+      const customName = getGameCustomization(game.id || game.name, 'name') || game.name;
+      const customCover = getGameCustomization(game.id || game.name, 'cover') || game.cover;
+      
+      card.innerHTML = `
+        <button type="button" class="card-favorite ${isFavorited ? 'favorited' : ''}" data-game-id="${game.id || game.name}" title="${isFavorited ? 'Remove favorite' : 'Add to favorites'}">
+          ${isFavorited ? '❤️' : '🤍'}
+        </button>
+        <img src="${customCover}" alt="${customName}" loading="lazy" onerror="this.src='https://placehold.co/400x400/1f2942/ffffff?text=${encodeURIComponent(customName)}'" />
+        <div class="card-edit-overlay">
+          <button type="button" class="card-edit-btn" title="Rename game" data-action="rename">✏️</button>
+          <button type="button" class="card-edit-btn" title="Change picture" data-action="picture">🖼️</button>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">${customName}</h3>
+          <p class="card-subtitle">${game.author}</p>
+          <div class="card-actions">
+            <button type="button" data-action="play">▶ Play</button>
+            <button type="button" data-action="newtab">🔗 New Tab</button>
+            <button type="button" data-action="download">⬇ Download</button>
+          </div>
+        </div>
+      `;
+      
+      const favoriteBtn = card.querySelector('.card-favorite');
+      favoriteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFavorite(game);
+      });
+      
+      const renameBtn = card.querySelector('[data-action="rename"]');
+      if (renameBtn) {
+        renameBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openRenameModal(game);
+        });
+      }
+      
+      const pictureBtn = card.querySelector('[data-action="picture"]');
+      if (pictureBtn) {
+        pictureBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openPictureModal(game);
+        });
+      }
+      
+      card.querySelector('[data-action="play"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        openPlayer(game);
+      });
+      card.querySelector('[data-action="newtab"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        openOutside(game);
+      });
+      const dlBtn = card.querySelector('[data-action="download"]');
+      if (dlBtn) dlBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        downloadGame(game);
+      });
+      card.addEventListener('click', () => openPlayer(game));
+      
+      return card;
+    }
+
+    function renderGamesTo(container, games) {
+      container.innerHTML = '';
+      if (games.length === 0) {
+        container.innerHTML = '<div class="empty-state">🎮 No games found. Try a different category or search!</div>';
+        return;
+      }
+      const fragment = document.createDocumentFragment();
+      games.forEach(game => fragment.appendChild(renderCard(game)));
+      container.appendChild(fragment);
+    }
+
+    function toggleFavorite(game) {
+      const id = game.id?.toString() || game.name;
+      if (favorites.has(id)) {
+        favorites.delete(id);
+        showToast('Removed from favorites');
+      } else {
+        favorites.add(id);
+        showToast('Added to favorites ❤️');
+      }
+      saveFavorites();
+      updateUI();
+    }
+
+    // Game Customization
+    let currentEditingGame = null;
+
+    function getGameCustomization(gameId, key) {
+      const customizations = JSON.parse(localStorage.getItem('drtojiCustomizations') || '{}');
+      return customizations[gameId]?.[key];
+    }
+
+    function setGameCustomization(gameId, key, value) {
+      const customizations = JSON.parse(localStorage.getItem('drtojiCustomizations') || '{}');
+      if (!customizations[gameId]) customizations[gameId] = {};
+      customizations[gameId][key] = value;
+      localStorage.setItem('drtojiCustomizations', JSON.stringify(customizations));
+    }
+
+    function openRenameModal(game) {
+      currentEditingGame = game;
+      const renameInput = document.getElementById('renameInput');
+      const customName = getGameCustomization(game.id || game.name, 'name') || game.name;
+      renameInput.value = customName;
+      document.getElementById('renameModal').classList.add('open');
+      renameInput.focus();
+    }
+
+    function closeRenameModal() {
+      document.getElementById('renameModal').classList.remove('open');
+      currentEditingGame = null;
+    }
+
+    function saveRename() {
+      if (!currentEditingGame) return;
+      const newName = document.getElementById('renameInput').value.trim();
+      if (!newName) {
+        showToast('Name cannot be empty');
+        return;
+      }
+      setGameCustomization(currentEditingGame.id || currentEditingGame.name, 'name', newName);
+      showToast(`✏️ Renamed to "${newName}"`);
+      closeRenameModal();
+      updateUI();
+    }
+
+    function openPictureModal(game) {
+      currentEditingGame = game;
+      const pictureInput = document.getElementById('pictureInput');
+      pictureInput.value = '';
+      document.getElementById('pictureModal').classList.add('open');
+      pictureInput.click();
+    }
+
+    function closePictureModal() {
+      document.getElementById('pictureModal').classList.remove('open');
+      currentEditingGame = null;
+    }
+
+    function savePicture() {
+      if (!currentEditingGame) return;
+      const pictureInput = document.getElementById('pictureInput');
+      const file = pictureInput.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        setGameCustomization(currentEditingGame.id || currentEditingGame.name, 'cover', dataUrl);
+        showToast('🖼️ Picture updated');
+        closePictureModal();
+        updateUI();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Modal close on outside click
+    document.addEventListener('click', (e) => {
+      const renameModal = document.getElementById('renameModal');
+      const pictureModal = document.getElementById('pictureModal');
+      if (e.target === renameModal) closeRenameModal();
+      if (e.target === pictureModal) closePictureModal();
+    });
+
+    // Enter key in rename modal
+    document.getElementById('renameInput')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') saveRename();
+    });
+
+    function updateUI() {
+      const filteredGames = allGames.filter(game => {
+        const matchesSearch = !currentSearchQuery || 
+          game.name.toLowerCase().includes(currentSearchQuery) ||
+          (game.author && game.author.toLowerCase().includes(currentSearchQuery));
+        
+        const matchesCategory = currentCategory === 'all' || game.category === currentCategory;
+        return matchesSearch && matchesCategory;
+      });
+      
+      const favoriteGames = allGames.filter(g => favorites.has(g.id?.toString() || g.name));
+      if (favoriteGames.length > 0) {
+        favoritesSection.style.display = 'block';
+        renderGamesTo(favoritesRow, favoriteGames);
+        favoritesCount.textContent = `${favoriteGames.length} game${favoriteGames.length !== 1 ? 's' : ''}`;
+      } else {
+        favoritesSection.style.display = 'none';
+      }
+      
+      renderGamesTo(gamesRow, filteredGames);
+      gamesCount.textContent = `${filteredGames.length} game${filteredGames.length !== 1 ? 's' : ''}`;
+      
+      const categoryNames = {
+        'all': 'All Games',
+        'action': '⚡ Action Games',
+        'racing': '🏎️ Racing Games',
+        'shooting': '🔫 Shooting Games',
+        'puzzle': '🧩 Puzzle Games',
+        'sports': '⚽ Sports Games',
+        'makeup': '💄 Dress-up & Fashion',
+        'adventure': '🗺️ Adventure Games'
+      };
+      currentCategoryTitle.textContent = categoryNames[currentCategory] || 'Games';
+    }
+
+    let currentGame = null;
+
+    function openPlayer(game) {
+      if (!game.url && !game.content) {
+        alert('Game URL is not available.');
+        return;
+      }
+      
+      currentGame = game;
+      playerTitle.textContent = game.name || 'Playable Game';
+      playerMeta.textContent = `by ${game.author || 'DRTOJIS'} | Press F for fullscreen | ESC to close`;
+      
+      playerLoading.style.display = 'flex';
+      playerFrame.removeAttribute('src');
+      playerFrame.removeAttribute('srcdoc');
+      
+      if (game.content) {
+        playerFrame.srcdoc = game.content;
+        setTimeout(() => { playerLoading.style.display = 'none'; }, 500);
+      } else if (game.url) {
+        const isRemote = /^https?:\/\//i.test(game.url);
+        if (!isRemote) {
+          fetch(game.url)
+            .then(res => res.text())
+            .then(html => {
+              playerFrame.srcdoc = addBaseIfMissing(html, game.url);
+              playerLoading.style.display = 'none';
+            })
+            .catch(err => {
+              console.warn('Local file fetch failed, falling back to iframe src:', err);
+              playerFrame.src = game.url;
+              playerLoading.style.display = 'none';
+            });
+        } else {
+          playerFrame.srcdoc = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#000;color:#fff;">Loading game...</div>';
+          
+          fetch(game.url + "?t=" + Date.now())
+            .then(res => res.text())
+            .then(html => {
+              let patchedHtml = html.replace(
+                /https:\/\/cdn\.jsdelivr\.net\/gh\/genizy\/cg-rip@main\/buildnow-gg\//g,
+                'https://raw.githubusercontent.com/genizy/cg-rip/main/buildnow-gg/'
+              );
+              patchedHtml = addBaseIfMissing(patchedHtml, game.url);
+              playerFrame.srcdoc = patchedHtml;
+              playerLoading.style.display = 'none';
+            })
+            .catch(err => {
+              console.error('Failed to load game:', err);
+              playerFrame.srcdoc = `<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#000;color:#f00;flex-direction:column;gap:1rem;text-align:center;padding:20px;">
+                <p>⚠️ Failed to load game.</p>
+                <p style="font-size:0.8rem;color:#888;">The game might be blocked by your network.</p>
+                <button onclick="document.getElementById('selectUpload').click()" style="background:#ff3d71;border:none;padding:10px 20px;border-radius:20px;color:white;cursor:pointer;">📁 Upload My Own Game</button>
+              </div>`;
+              playerLoading.style.display = 'none';
+            });
+        }
+      }
+      
+      player.classList.add('open');
+      player.setAttribute('aria-hidden', 'false');
+    }
+
+    function closePlayerView() {
+      player.classList.remove('open');
+      player.setAttribute('aria-hidden', 'true');
+      playerFrame.src = '';
+      playerFrame.srcdoc = '';
+      if (playerShell.classList.contains('fullscreen')) {
+        exitFullscreen();
+      }
+    }
+
+    function enterFullscreen() {
+      if (playerShell.requestFullscreen) {
+        playerShell.requestFullscreen();
+        playerShell.classList.add('fullscreen');
+      }
+    }
+
+    function exitFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        playerShell.classList.remove('fullscreen');
+      }
+    }
+
+    function toggleFullscreen() {
+      if (playerShell.classList.contains('fullscreen')) {
+        exitFullscreen();
+      } else {
+        enterFullscreen();
+      }
+    }
+
+    function openOutside(game) {
+      if (game.content) {
+        const blob = new Blob([game.content], { type: 'text/html; charset=utf-8' });
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank', 'noopener');
+        return;
+      }
+      if (!game.url) return;
+      const isLocalFile = !/^https?:\/\//i.test(game.url);
+      if (isLocalFile) {
+        fetch(game.url)
+          .then(res => res.text())
+          .then(html => {
+            const newWin = window.open('about:blank', '_blank');
+            if (!newWin) return;
+            newWin.document.open();
+            newWin.document.write(addBaseIfMissing(html, game.url));
+            newWin.document.close();
+          })
+          .catch(err => {
+            console.error('openOutside local fetch failed', err);
+            window.open(game.url, '_blank', 'noopener');
+          });
+        return;
+      }
+      const newWin = window.open('about:blank', '_blank');
+      if (!newWin) return;
+      fetch(game.url + '?t=' + Date.now())
+        .then(res => res.text())
+        .then(html => {
+          const cleaned = cleanHtml(html);
+          newWin.document.open();
+          newWin.document.write(cleaned);
+          newWin.document.close();
+        })
+        .catch(err => {
+          // fallback: open raw URL
+          console.error('openOutside fetch failed', err);
+          newWin.location.href = game.url;
+        });
+    }
+
+    function cleanHtml(html) {
+      try {
+        const googleAds = /<script.*?googletagmanager.*?<\/script>/gms;
+        const inlineAds = /<script>\(.*?<\/script>/gms;
+        const sidebars = /<div id="side[\s\S]*?<\/div>/gms;
+        const mobileAds = /<div id="Mobile[\s\S]*?<\/div>/gms;
+        const sidebarStyles = /#sidebarad[0-9].*?}/gms;
+        let out = html.replace(googleAds, '')
+                      .replace(inlineAds, '')
+                      .replace(sidebars, '')
+                      .replace(mobileAds, '')
+                      .replace(sidebarStyles, '');
+        return out;
+      } catch (e) {
+        return html;
+      }
+    }
+
+    function addBaseIfMissing(html, baseUrl) {
+      try {
+        if (!baseUrl) return html;
+        const hasBase = /<base\s+href=["'].*?["']\s*>/i.test(html);
+        if (hasBase) return html;
+        if (/<!doctype html>/i.test(html) || /<html/i.test(html)) {
+          return html.replace(/<head( [^>]*)?>/i, match => match + `\n<base href="${baseUrl}">`);
+        }
+        // fallback: prepend head with base
+        return `<head><base href="${baseUrl}"></head>` + html;
+      } catch (e) { return html; }
+    }
+
+    function downloadGame(game) {
+      if (game.content) {
+        const blob = new Blob([game.content], { type: 'text/html; charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (game.name || 'game') + '.html';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        return;
+      }
+      if (!game.url) return;
+      fetch(game.url + '?t=' + Date.now())
+        .then(res => res.text())
+        .then(html => {
+          const cleaned = cleanHtml(html);
+          const blob = new Blob([cleaned], { type: 'text/html; charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = (game.name || 'game') + '.html';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        }).catch(err => showToast('Download failed'));
+    }
+
+    function handleFileUpload(file) {
+      if (!file || !file.name.toLowerCase().endsWith('.html')) {
+        alert('Please choose an HTML file.');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File too large! Maximum 10MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const content = reader.result;
+        const gameId = 'upload-' + Date.now();
+        const uploaded = {
+          id: gameId,
+          name: file.name.replace('.html', ''),
+          content: content,
+          author: 'Your Upload',
+          category: 'all',
+          cover: `https://placehold.co/400x400/ff3d71/ffffff?text=${encodeURIComponent(file.name.replace('.html', ''))}`,
+          featured: true
+        };
+        uploadedGames.unshift(uploaded);
+        saveUploads();
+        renderUploads();
+        allGames.unshift(uploaded);
+        favorites.add(gameId);
+        saveFavorites();
+        updateUI();
+        openPlayer(uploaded);
+        showToast(`✅ ${file.name} uploaded and favorited!`);
+      };
+      reader.readAsText(file);
+    }
+
+    function mergeUniqueGames(primary, secondary) {
+      const gameMap = new Map();
+      [...primary, ...secondary].forEach(game => {
+        if (game && game.id !== undefined && !gameMap.has(game.id)) {
+          gameMap.set(game.id, game);
+        }
+      });
+      return Array.from(gameMap.values());
+    }
+
+    // Deduplicate array of games by id, then url, then name
+    function uniqueGames(games) {
+      const map = new Map();
+      for (const g of games) {
+        if (!g) continue;
+        const key = (g.id !== undefined && g.id !== null) ? `id:${g.id}` : (g.url ? `url:${g.url}` : `name:${(g.name||'').toLowerCase()}`);
+        if (!map.has(key)) {
+          map.set(key, g);
+        }
+      }
+      // also collapse games that share same url but different ids
+      const urlMap = new Map();
+      for (const g of map.values()) {
+        if (g.url) {
+          const u = g.url.replace(/\?.*$/,'');
+          if (urlMap.has(u)) continue;
+          urlMap.set(u, g);
+        }
+      }
+      // prefer urlMap values if available
+      if (urlMap.size > 0) return Array.from(urlMap.values());
+      return Array.from(map.values());
+    }
+
+    // Replace or neutralize upstream-broken games (e.g. BuildNow.gg)
+    function sanitizeGames(games) {
+      if (!Array.isArray(games)) return games;
+      return games.map(g => g);
+    }
+
+    async function loadGames() {
+      gamesCount.textContent = 'Loading games...';
+      const fallbackGames = mergeUniqueGames(embeddedGames, embeddedCarGames);
+      allGames = fallbackGames.map(normalizeGame);
+      updateUI();
+      // Try multiple candidate zone sources (improves chance to pull full list)
+      try {
+        const results = await Promise.allSettled(ZONES_CANDIDATES.map(u => fetch(u + "?t=" + Date.now()).then(r => r.ok ? r.json() : [])));
+        const combined = [];
+        results.forEach(r => {
+          if (r.status === 'fulfilled' && Array.isArray(r.value)) combined.push(...r.value);
+        });
+        const data = combined.length ? combined : (await (await fetch(ZONES_URL + "?t=" + Date.now())).json());
+
+        // Deduplicate raw data across multiple sources first
+        const dedupedRaw = uniqueGames(data.filter(item => item && item.id !== -1 && item.id !== undefined));
+        allGames = dedupedRaw.map(normalizeGame);
+        allGames = sanitizeGames(allGames);
+
+        // If we have a local BuildNow replacement file, point matching entries to it
+        try {
+          allGames = allGames.map(g => {
+            if (!g) return g;
+            const lowerName = (g.name || '').toLowerCase();
+            const lowerUrl = (g.url || '').toLowerCase();
+            if (lowerName.includes('buildnow') || lowerUrl.includes('buildnow') || lowerUrl.includes('cg-rip') || lowerUrl.includes('genizy')) {
+              return { ...g, url: './buildnow-replacement.html', tags: (g.tags||[]).filter(t=>t!=='broken') };
+            }
+            return g;
+          });
+        } catch (e) { }
+        updateUI();
+        showToast(`🎮 Loaded ${allGames.length} games!`);
+      } catch (error) {
+        console.error('Failed to load games:', error);
+        allGames = fallbackGames.map(normalizeGame);
+        allGames = sanitizeGames(allGames);
+        updateUI();
+        showToast(`🎮 Loaded ${allGames.length} embedded games (offline mode)`);
+      }
+      // Update total games indicator
+      const totalEl = document.getElementById('totalGames');
+      if (totalEl) totalEl.textContent = `Total games: ${allGames.length}`;
+    }
+
+    // ==================== EVENT LISTENERS ====================
+    searchInput.addEventListener('input', (e) => {
+      currentSearchQuery = e.target.value.trim().toLowerCase();
+      updateUI();
+    });
+    
+    selectUpload.addEventListener('click', () => fileInput.click());
+    uploadButton.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', event => {
+      const file = event.target.files[0];
+      if (file) handleFileUpload(file);
+      event.target.value = '';
+    });
+    
+    closePlayer.addEventListener('click', closePlayerView);
+    openNewTab.addEventListener('click', () => {
+      if (currentGame) openOutside(currentGame);
+    });
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    
+    player.addEventListener('click', event => {
+      if (event.target === player) closePlayerView();
+    });
+    
+    document.querySelectorAll('.category-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentCategory = tab.dataset.category;
+        updateUI();
+      });
+    });
+    
+    document.querySelectorAll('.tag-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const key = button.dataset.filter;
+        searchInput.value = key;
+        currentSearchQuery = key;
+        updateUI();
+      });
+    });
+
+    const themeButton = document.getElementById('themeButton');
+    const themePanel = document.getElementById('themePanel');
+    const accentColor = document.getElementById('accentColor');
+    const bgColor = document.getElementById('bgColor');
+    const surfaceColor = document.getElementById('surfaceColor');
+    const textColor = document.getElementById('textColor');
+    const resetTheme = document.getElementById('resetTheme');
+
+    function hexToRgba(hex, alpha) {
+      const sanitized = hex.replace('#', '');
+      const bigint = parseInt(sanitized, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function applyTheme(colors) {
+      const root = document.documentElement.style;
+      if (colors.accent) {
+        root.setProperty('--accent', colors.accent);
+        root.setProperty('--accent-soft', hexToRgba(colors.accent, 0.12));
+        root.setProperty('--border', hexToRgba(colors.accent, 0.08));
+      }
+      if (colors.bg) {
+        root.setProperty('--bg', colors.bg);
+      }
+      if (colors.surface) {
+        root.setProperty('--surface', colors.surface);
+        root.setProperty('--surface-soft', hexToRgba(colors.surface, 0.16));
+        root.setProperty('--surface-strong', hexToRgba(colors.surface, 0.3));
+      }
+      if (colors.text) {
+        root.setProperty('--text', colors.text);
+      }
+    }
+
+    function saveTheme() {
+      const theme = {
+        accent: accentColor.value,
+        bg: bgColor.value,
+        surface: surfaceColor.value,
+        text: textColor.value,
+      };
+      localStorage.setItem('drtojiTheme', JSON.stringify(theme));
+      applyTheme(theme);
+    }
+
+    function loadTheme() {
+      const saved = localStorage.getItem('drtojiTheme');
+      const defaultTheme = {
+        accent: '#ffffff',
+        bg: '#000000',
+        surface: '#0d0d0d',
+        text: '#ffffff'
+      };
+      const theme = saved ? JSON.parse(saved) : defaultTheme;
+      accentColor.value = theme.accent;
+      bgColor.value = theme.bg;
+      surfaceColor.value = theme.surface;
+      textColor.value = theme.text;
+      applyTheme(theme);
+    }
+
+    themeButton.addEventListener('click', () => {
+      themePanel.classList.toggle('open');
+      themePanel.setAttribute('aria-hidden', themePanel.classList.contains('open') ? 'false' : 'true');
+    });
+    accentColor.addEventListener('input', saveTheme);
+    bgColor.addEventListener('input', saveTheme);
+    surfaceColor.addEventListener('input', saveTheme);
+    textColor.addEventListener('input', saveTheme);
+    resetTheme.addEventListener('click', () => {
+      accentColor.value = '#ffffff';
+      bgColor.value = '#000000';
+      surfaceColor.value = '#0d0d0d';
+      textColor.value = '#ffffff';
+      saveTheme();
+    });
+    document.addEventListener('click', (event) => {
+      if (!themePanel.contains(event.target) && event.target !== themeButton) {
+        themePanel.classList.remove('open');
+        themePanel.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    loadTheme();
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && player.classList.contains('open')) {
+        closePlayerView();
+      }
+      if ((e.key === 'f' || e.key === 'F') && player.classList.contains('open')) {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+    
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        playerShell.classList.remove('fullscreen');
+      }
+    });
+    
+    // Initialize
+    loadFavorites();
+    loadUploads();
+    loadGames();
+  </script>
+</body>
+</html>
